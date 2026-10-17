@@ -16,6 +16,12 @@ npm install github:ichaida/orbit-avatars
 npm install react
 ```
 
+A compiled package is also available from the GitHub release:
+
+```sh
+npm install https://github.com/ichaida/orbit-avatars/releases/download/v0.1.0/ichaida-orbit-avatars-0.1.0.tgz
+```
+
 Git installs run the TypeScript prepare step. For reproducible production installs, pin a reviewed commit SHA or build from a source checkout. To use a local checkout, run `bun install` and `bun run build`, then install its package tarball created with `npm pack`.
 
 ```tsx
