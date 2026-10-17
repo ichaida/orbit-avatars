@@ -77,9 +77,13 @@ All allowed values are available in the readonly `avatarOptions` arrays and the 
 | Facial hair | none, beard, moustache                            |
 | Hijab style | classic, wrapped, draped                          |
 | Scarf color | cream, taupe, rose, blue, sage, lilac             |
-| Accessory   | none, crown                                       |
+| Accessory   | none, crown, headphones, flower, bow, star        |
 
 Crowns are exclusive: explicitly choosing one clears companions, glasses, beanies and turbans. Hijabs can stay underneath. An explicitly requested other accessory prevents a randomly generated crown from overriding it. The gallery applies the latest accessory selection.
+
+Headphones, flowers, bows and star pins can be paired with glasses and worn over hijabs. Head accessories occupy the same space as companions, beanies and turbans, so an explicitly selected head accessory clears those items. The gallery applies the latest conflicting choice. Adding options may change seed-only portraits between versions; persist complete traits or pin your package version when exact appearance matters.
+
+See the [changelog](https://orbitavatars.chaida.dev/changelog/) for release notes.
 
 Hijab styles/colors only apply to hijabs. Their hair, ears, neck and facial-hair layers are covered, and fabric folds are clipped outside the exposed face. All faces have dot eyes, a subtle nose and a smile.
 

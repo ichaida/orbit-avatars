@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Changelog — Orbit Avatars</title>
+    <meta
+      name="description"
+      content="Release notes for Orbit Avatars: new artwork, library improvements and updates to the avatar studio."
+    />
+    <link rel="canonical" href="https://orbitavatars.chaida.dev/changelog/" />
+    <link rel="icon" href="/default-avatar.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#releases">Skip to releases</a>
+    <div class="wrap">
+      <header class="site-header">
+        <a class="wordmark" href="/" aria-label="Orbit Avatars home"
+          ><span class="orbit-mark" aria-hidden="true">o</span>orbit<span
+            class="wordmark-light"
+            >avatars</span
+          ></a
+        >
+        <nav aria-label="Main navigation">
+          <a href="/#studio">Studio</a
+          ><a href="/changelog/" aria-current="page">Changelog</a
+          ><a
+            class="github-link"
+            href="https://github.com/ichaida/orbit-avatars"
+            target="_blank"
+            rel="noreferrer"
+            >GitHub <span aria-hidden="true">↗</span></a
+          >
+        </nav>
+      </header>
+      <main>
+        <section class="changelog-intro">
+          <h1>Little updates.<br /><em>More character.</em></h1>
+          <p>
+            The latest additions, thoughtful fixes, and new ways to make a face
+            your own. Here’s what’s happening with Orbit Avatars.
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/ichaida/orbit-avatars/releases"
+            >All releases on GitHub ↗</a
+          >
+        </section>
+        <div class="changelog-layout">
+          <nav class="release-nav" aria-label="Release versions">
+            <a href="#v0-2-0">v0.2.0 · More personality</a
+            ><a href="#v0-1-1">v0.1.1 · Hello, npm</a
+            ><a href="#v0-1-0">v0.1.0 · First faces</a>
+          </nav>
+          <div id="releases">
+            <article class="release-entry" id="v0-2-0">
+              <div class="release-meta">
+                <span class="version">v0.2.0</span
+                ><time datetime="2026-10-17">October 17, 2026</time>
+              </div>
+              <h2>A better fit. A few little extras.</h2>
+              <p>
+                Four original accessories join the crew, glasses get a more
+                considered fit, and the gallery becomes a space to make
+                something yours.
+              </p>
+              <div
+                class="release-art"
+                id="release-art"
+                aria-label="New accessories on hijab portraits"
+              ></div>
+              <h3>New</h3>
+              <ul>
+                <li>
+                  Headphones, a flower, a bow, and a star pin. Each can be worn
+                  over a hijab and paired with glasses.
+                </li>
+                <li>
+                  A redesigned studio with a larger preview, grouped controls,
+                  live React code, and a quick path from the collection to your
+                  editor.
+                </li>
+                <li>
+                  This changelog, so library and artwork changes have a home.
+                </li>
+              </ul>
+              <h3>Fixed</h3>
+              <ul>
+                <li>
+                  Round and square glasses now follow the eye positions of each
+                  face. Hijab frames are narrower and sit inside the exposed
+                  face instead of drifting onto the scarf.
+                </li>
+                <li>
+                  Glasses on uncovered faces now center on both eyes, with a
+                  connected bridge.
+                </li>
+              </ul>
+              <h3>For developers</h3>
+              <p>
+                The <code>accessory</code> option now also accepts
+                <code>headphones</code>, <code>flower</code>, <code>bow</code>,
+                and <code>star</code>. Head accessories replace hats and
+                companions. Crowns still exclude glasses; the new additions
+                allow them.
+              </p>
+              <p>
+                New option values can change the appearance of seed-only avatars
+                between library versions. Pin the package version or persist
+                complete traits for a selected portrait.
+              </p>
+              <a
+                href="https://github.com/ichaida/orbit-avatars/releases/tag/v0.2.0"
+                >Release details ↗</a
+              >
+            </article>
+            <article class="release-entry" id="v0-1-1">
+              <div class="release-meta">
+                <span class="version">v0.1.1</span
+                ><time datetime="2026-10-17">October 17, 2026</time>
+              </div>
+              <h2>Hello, npm.</h2>
+              <p>
+                Install Orbit Avatars directly from npm with compiled
+                JavaScript, TypeScript declarations, and an optional React
+                component.
+              </p>
+              <ul>
+                <li>
+                  Published as <code>orbit-avatars</code>, with core and
+                  <code>orbit-avatars/react</code> exports.
+                </li>
+                <li>
+                  Added installation instructions and examples to the gallery
+                  and documentation.
+                </li>
+                <li>
+                  Verified a fresh registry installation with React server
+                  rendering.
+                </li>
+              </ul>
+              <a
+                href="https://github.com/ichaida/orbit-avatars/releases/tag/v0.1.1"
+                >Release details ↗</a
+              >
+            </article>
+            <article class="release-entry" id="v0-1-0">
+              <div class="release-meta">
+                <span class="version">v0.1.0</span
+                ><time datetime="2026-10-17">October 17, 2026</time>
+              </div>
+              <h2>Meet the crew.</h2>
+              <p>
+                The first public release: original SVG portraits, a
+                dependency-free TypeScript core, and a gallery to explore them.
+              </p>
+              <ul>
+                <li>
+                  Seeded faces, hair, skin tones, outfits, glasses, and little
+                  companions.
+                </li>
+                <li>
+                  Three hijab silhouettes with independent scarf colors and
+                  exclusive crown options.
+                </li>
+                <li>
+                  Generated batches beyond the curated collection, SVG
+                  downloads, and React props.
+                </li>
+                <li>
+                  Open source under the MIT license, with a home at
+                  orbitavatars.chaida.dev.
+                </li>
+              </ul>
+              <a
+                href="https://github.com/ichaida/orbit-avatars/releases/tag/v0.1.0"
+                >Release details ↗</a
+              >
+            </article>
+          </div>
+        </div>
+      </main>
+      <footer>
+        <a class="wordmark" href="/"
+          >orbit<span class="wordmark-light">avatars</span></a
+        >
+        <p>Original artwork. Made for everyone.</p>
+        <div>
+          <a href="/changelog/">Changelog</a
+          ><a href="https://github.com/ichaida/orbit-avatars/blob/main/LICENSE"
+            >MIT license</a
+          ><a href="/fonts/LICENSE.txt">Font license</a>
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="/changelog.js"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
   "name": "orbit-avatars",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Friendly, customizable SVG avatars with a dependency-free TypeScript core and optional React component.",
   "license": "MIT",
   "author": "Ismail Chaida",

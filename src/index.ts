@@ -12,7 +12,7 @@ export const avatarOptions = {
   facialHair: ["none", "beard", "moustache"],
   hijabStyle: ["classic", "wrapped", "draped"],
   scarfColor: ["cream", "taupe", "rose", "blue", "sage", "lilac"],
-  accessory: ["none", "crown"],
+  accessory: ["none", "crown", "headphones", "flower", "bow", "star"],
 } as const;
 
 export type AvatarTraits = {
@@ -99,28 +99,33 @@ export function resolveAvatar(
         key,
       ) && index % 3 !== 0
         ? choices[0]
-        : choices[index % choices.length];
+        : choices[
+            (key === "accessory" ? Math.floor(index / 3) : index) %
+              choices.length
+          ];
     Object.assign(result, {
       [key]: requested && choices.includes(requested) ? requested : generated,
     });
   }
-  if (result.accessory === "crown") {
+  if (result.accessory !== "none") {
     const choseAnotherAccessory =
-      overrides.accessory !== "crown" &&
+      overrides.accessory !== result.accessory &&
       ((overrides.companion !== undefined &&
         overrides.companion !== "none" &&
         overrides.companion === result.companion) ||
-        (overrides.glasses !== undefined &&
+        (result.accessory === "crown" &&
+          overrides.glasses !== undefined &&
           overrides.glasses !== "none" &&
           overrides.glasses === result.glasses) ||
         ((overrides.headwear === "beanie" || overrides.headwear === "turban") &&
           overrides.headwear === result.headwear));
     if (choseAnotherAccessory) return { ...result, accessory: "none" };
-    // A hijab is the base garment; hats and turbans cannot share the crown.
+    // Head accessories occupy the same space as companions and hats.
+    // Hijabs remain the base garment; only crowns also exclude glasses.
     return {
       ...result,
       companion: "none",
-      glasses: "none",
+      glasses: result.accessory === "crown" ? "none" : result.glasses,
       headwear: result.headwear === "hijab" ? "hijab" : "none",
     };
   }
@@ -467,6 +472,49 @@ function crown(): string {
   return `<g data-layer="crown">${path("M43 26L39 10L50 17L59 5L68 17L80 10L75 28Q59 33 43 26Z", "#F0C85E")}${path("M44 26Q59 30 74 27", "none", 'stroke-width="1.5"')}${ellipse(59, 22, 2.2, 2.8, "#D98A76")}</g>`;
 }
 
+/** Frames follow the eye anchors, including the narrower, turned hijab face. */
+function glassesFrame(t: AvatarTraits): string {
+  if (t.glasses === "none") return "";
+  const eyes =
+    t.headwear === "hijab"
+      ? [
+          [43, 60],
+          [55, 61],
+        ]
+      : [
+          [47, 61],
+          [60, 60],
+        ];
+  const [left, right] = eyes;
+  const rx = 5.2,
+    ry = 6;
+  const lenses = eyes
+    .map(([x, y]) =>
+      t.glasses === "round"
+        ? ellipse(x, y, rx, ry, "none")
+        : `<rect x="${x - rx}" y="${y - ry}" width="${rx * 2}" height="${ry * 2}" rx="2" fill="none"/>`,
+    )
+    .join("");
+  return `<g data-frame="${t.glasses}" stroke-width="1.8">${lenses}${path(`M${left[0] + rx} ${left[1] - 1}Q${(left[0] + right[0]) / 2} ${Math.min(left[1], right[1]) - 3} ${right[0] - rx} ${right[1] - 1}M${left[0] - rx} ${left[1] - 2}l-2-1M${right[0] + rx} ${right[1] - 2}l3-1`)}</g>`;
+}
+
+function headAccessory(t: AvatarTraits): string {
+  switch (t.accessory) {
+    case "none":
+      return "";
+    case "crown":
+      return crown();
+    case "headphones":
+      return `<g data-layer="headphones">${path("M27 61V48C27 9 91 9 91 48V61", "none", 'stroke-width="5"')}${path("M29 59V48C29 12 89 12 89 48V59", "none", 'stroke="#A8ADC6" stroke-width="2"')}<rect x="22" y="52" width="12" height="23" rx="6" fill="#667193"/><rect x="85" y="52" width="12" height="23" rx="6" fill="#667193"/>${path("M28 57v12M91 57v12", "none", 'stroke="#BDC4DB" stroke-width="2"')}</g>`;
+    case "flower":
+      return `<g data-layer="flower" transform="translate(77 38)">${[0, 60, 120, 180, 240, 300].map((a) => `<ellipse cx="0" cy="-6" rx="3.8" ry="5.5" fill="#EBA8A6" transform="rotate(${a})" stroke-width="1.5"/>`).join("")}<circle r="4" fill="#F4CF65" stroke-width="1.5"/>${path("M-5 8Q-15 8-12 1Q-4 0-5 8Z", "#A0B585", 'stroke-width="1.5"')}</g>`;
+    case "bow":
+      return `<g data-layer="bow">${path("M66 30Q52 13 51 27Q50 40 66 34Q80 44 81 31Q83 18 66 30Z", "#E29194")}${path("M63 34l-7 12 10-4 5 5 1-12", "#E29194")}<rect x="63" y="28" width="7" height="9" rx="3" fill="#C97583"/>${path("M56 29l6 3M73 32l5-2", "none", 'stroke-width="1.4"')}</g>`;
+    case "star":
+      return `<g data-layer="star">${path("M80 38L83 44L90 45L85 50L86 57L80 54L74 57L75 50L70 45L77 44Z", "#F0C85E", 'stroke-width="1.8"')}${path("M78 48l2-4", "none", 'stroke="#FFF1BE" stroke-width="1.5"')}</g>`;
+  }
+}
+
 /** Return a complete standalone SVG, with a fixed viewBox and circular crop. */
 export function createAvatarSvg(
   seed: AvatarSeed,
@@ -530,17 +578,7 @@ export function createAvatarSvg(
               'stroke-opacity=".3" stroke-width="1.4"',
             )
           : "";
-  const glasses =
-    t.glasses === "round"
-      ? ellipse(46, 61, 8, 8, "none") +
-        ellipse(65, 60, 8, 8, "none") +
-        path("M54 60h3M73 59l6-2")
-      : t.glasses === "square"
-        ? path(
-            "M38 54l15-1 1 13-15 1ZM58 53l15-1 1 13-15 1ZM54 58h4M74 56l5-1",
-            "none",
-          )
-        : "";
+  const glasses = glassesFrame(t);
   const portrait =
     t.headwear === "hijab"
       ? headwear
@@ -549,7 +587,7 @@ export function createAvatarSvg(
     t.companion === "none"
       ? ""
       : `<g data-layer="companion">${companion(t.companion, t.hair === "waves")}</g>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" ${title ? 'role="img"' : 'aria-hidden="true"'}>${title}<defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})"><path d="M0 0h120v120H0z" fill="${background}"/><g stroke="${ink}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${back}${body}${shirt}${portrait}${glasses ? `<g data-layer="glasses">${glasses}</g>` : ""}${t.accessory === "crown" ? crown() : ""}${friend}</g></g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" ${title ? 'role="img"' : 'aria-hidden="true"'}>${title}<defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})"><path d="M0 0h120v120H0z" fill="${background}"/><g stroke="${ink}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${back}${body}${shirt}${portrait}${glasses ? `<g data-layer="glasses">${glasses}</g>` : ""}${headAccessory(t)}${friend}</g></g></svg>`;
 }
 
 /** Safe for img.src, CSS backgrounds and map marker elements. */

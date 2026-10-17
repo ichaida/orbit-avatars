@@ -275,7 +275,9 @@ test("crowns exclude other accessories across explicit traits and generated batc
     }
     for (const seed of Array.from({ length: 100 }, (_, i) => i)) {
       expect(resolveAvatar(seed, { companion: "cat" }).accessory).toBe("none");
-      expect(resolveAvatar(seed, { glasses: "round" }).accessory).toBe("none");
+      expect(resolveAvatar(seed, { glasses: "round" }).accessory).not.toBe(
+        "crown",
+      );
       expect(resolveAvatar(seed, { headwear: "beanie" }).accessory).toBe(
         "none",
       );
@@ -289,6 +291,95 @@ test("crowns exclude other accessories across explicit traits and generated batc
     expect(features.querySelectorAll("path")).toHaveLength(3);
     for (const feature of features.querySelectorAll("path"))
       expect(feature.getAttribute("stroke")).toBe("#262323");
+  } finally {
+    await window.happyDOM.close();
+  }
+});
+
+test("both frame shapes enclose each eye on all hijab silhouettes and uncovered faces", async () => {
+  const window = new Window();
+  try {
+    for (const headwear of ["none", "hijab"] as const) {
+      for (const hijabStyle of avatarOptions.hijabStyle) {
+        for (const glasses of ["round", "square"] as const) {
+          const svg = createAvatarSvg("fit", {
+            headwear,
+            hijabStyle,
+            glasses,
+            accessory: "none",
+            companion: "none",
+          });
+          const doc = new window.DOMParser().parseFromString(
+            svg,
+            "image/svg+xml",
+          );
+          const eyes = [
+            ...doc.querySelectorAll(
+              `[data-layer="${headwear === "hijab" ? "hijab-features" : "face-features"}"] ellipse`,
+            ),
+          ];
+          const frames = [
+            ...doc.querySelectorAll(
+              `[data-frame="${glasses}"] ${glasses === "square" ? "rect" : "ellipse"}`,
+            ),
+          ];
+          expect(frames).toHaveLength(2);
+          frames.forEach((frame, i) => {
+            const x = Number(eyes[i].getAttribute("cx")),
+              y = Number(eyes[i].getAttribute("cy"));
+            if (glasses === "square") {
+              const fx = Number(frame.getAttribute("x")),
+                fy = Number(frame.getAttribute("y"));
+              expect(fx + Number(frame.getAttribute("width")) / 2).toBeCloseTo(
+                x,
+              );
+              expect(fy + Number(frame.getAttribute("height")) / 2).toBeCloseTo(
+                y,
+              );
+              if (headwear === "hijab") {
+                expect(fx).toBeGreaterThan(35);
+                expect(fx + Number(frame.getAttribute("width"))).toBeLessThan(
+                  68,
+                );
+              }
+            } else {
+              expect(Number(frame.getAttribute("cx"))).toBe(x);
+              expect(Number(frame.getAttribute("cy"))).toBe(y);
+            }
+          });
+        }
+      }
+    }
+  } finally {
+    await window.happyDOM.close();
+  }
+});
+
+test("new accessories render over hijabs, allow glasses, and clear occupied head slots", async () => {
+  const window = new Window();
+  try {
+    for (const accessory of ["headphones", "flower", "bow", "star"] as const) {
+      for (const headwear of avatarOptions.headwear) {
+        const traits = resolveAvatar("extras", {
+          accessory,
+          headwear,
+          companion: "cat",
+          glasses: "square",
+        });
+        expect(traits.accessory).toBe(accessory);
+        expect(traits.glasses).toBe("square");
+        expect(traits.companion).toBe("none");
+        expect(traits.headwear).toBe(headwear === "hijab" ? "hijab" : "none");
+        const doc = new window.DOMParser().parseFromString(
+          createAvatarSvg("extras", traits),
+          "image/svg+xml",
+        );
+        expect(doc.querySelector("parsererror")).toBeNull();
+        expect(doc.querySelector(`[data-layer="${accessory}"]`)).not.toBeNull();
+        expect(doc.querySelector('[data-layer="glasses"]')).not.toBeNull();
+        expect(doc.querySelector('[data-layer="companion"]')).toBeNull();
+      }
+    }
   } finally {
     await window.happyDOM.close();
   }
