@@ -1,0 +1,10 @@
+node_modules/
+dist/
+site-dist/
+.wrangler/
+.env
+.env.*
+.dev.vars*
+*.tgz
+.DS_Store
+coverage/

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orbit Avatars — Open-source SVG avatars</title>
+    <meta
+      name="description"
+      content="Create friendly SVG avatars with an MIT-licensed TypeScript library. Customize faces, hair, hijabs and companions, then export SVG or React props."
+    />
+    <meta property="og:title" content="Orbit Avatars" />
+    <meta
+      property="og:description"
+      content="Friendly, customizable SVG avatars. Open source, MIT licensed, and generated locally."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://orbitavatars.chaida.dev/" />
+    <link rel="canonical" href="https://orbitavatars.chaida.dev/" />
+    <link rel="icon" href="/default-avatar.svg" type="image/svg+xml" />
+    <style>
+      @font-face {
+        font-family: "Open Runde";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("/fonts/open-runde-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Open Runde";
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("/fonts/open-runde-600.woff2") format("woff2");
+      }
+      :root {
+        color-scheme: light;
+        --paper: #f8f7f3;
+        --ink: #232722;
+        --muted: #62685f;
+        --line: #dddfd6;
+        --accent: #33634c;
+        font-family: "Open Runde", system-ui, sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+      .tag {
+        text-decoration: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button,
+      select {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #688e77;
+        outline-offset: 4px;
+      }
+      .wrap {
+        max-width: 1280px;
+        margin: auto;
+        padding: 0 56px;
+      }
+      header {
+        height: 104px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .wordmark {
+        font-size: 27px;
+        letter-spacing: -0.6px;
+        font-weight: 800;
+      }
+      .wordmark span {
+        color: var(--accent);
+      }
+      .tag,
+      .index {
+        font:
+          11px/1.4 ui-monospace,
+          monospace;
+        letter-spacing: 0.2px;
+      }
+      .tag {
+        border: 1px solid var(--line);
+        border-radius: 30px;
+        padding: 9px 14px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        align-items: center;
+        min-height: 475px;
+        gap: 50px;
+        padding: 56px 0;
+      }
+      h1 {
+        font-size: clamp(54px, 6.1vw, 83px);
+        line-height: 1.02;
+        letter-spacing: -2.4px;
+        margin: 0 0 25px;
+        font-weight: 650;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .intro {
+        max-width: 390px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.75;
+      }
+      .constellation {
+        position: relative;
+        height: 320px;
+      }
+      .constellation img {
+        position: absolute;
+        width: 112px;
+        height: 112px;
+      }
+      .constellation img:nth-child(1) {
+        width: 160px;
+        height: 160px;
+        left: 28%;
+        top: 26%;
+        transform: rotate(-8deg);
+      }
+      .constellation img:nth-child(2) {
+        left: 0;
+        top: 0;
+        transform: rotate(-12deg);
+      }
+      .constellation img:nth-child(3) {
+        right: 0;
+        top: 5%;
+        transform: rotate(9deg);
+      }
+      .constellation img:nth-child(4) {
+        left: 1%;
+        bottom: 0;
+        transform: rotate(6deg);
+      }
+      .constellation img:nth-child(5) {
+        right: 1%;
+        bottom: 0;
+        transform: rotate(-8deg);
+      }
+      .workbench {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        padding: 36px 0;
+        gap: 48px;
+      }
+      .portrait {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+      }
+      #portrait {
+        width: 180px;
+        height: 180px;
+      }
+      .sizes {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      h2 {
+        font-size: 27px;
+        letter-spacing: -0.5px;
+        font-weight: 600;
+        margin: 0;
+      }
+      .bench-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 22px;
+      }
+      .seed {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      input,
+      select {
+        border: 1px solid var(--line);
+        background: transparent;
+        padding: 9px 10px;
+        border-radius: 7px;
+        width: 100%;
+        min-width: 0;
+      }
+      .seed input {
+        width: 130px;
+      }
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px 18px;
+      }
+      .controls label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .controls label[hidden] {
+        display: none;
+      }
+      .controls select {
+        font-size: 13px;
+        color: var(--ink);
+        text-transform: capitalize;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      button {
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 10px 14px;
+        font-size: 12px;
+      }
+      .primary {
+        color: white;
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      #status {
+        font-size: 12px;
+        color: var(--accent);
+        min-height: 17px;
+        margin: 10px 0 0;
+      }
+      .collection-head {
+        padding: 40px 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .filters {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .collection-tools,
+      .collection-source,
+      .batch-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .collection-tools {
+        justify-content: space-between;
+        margin: 0 0 24px;
+      }
+      .collection-source button[aria-pressed="true"] {
+        background: #e6eadf;
+        color: var(--accent);
+      }
+      .batch-controls[hidden] {
+        display: none;
+      }
+      button:disabled {
+        cursor: default;
+        color: var(--muted);
+        opacity: 0.7;
+      }
+      .filters button {
+        border-color: transparent;
+        padding: 7px 10px;
+        border-radius: 30px;
+        color: var(--muted);
+      }
+      .filters button[aria-pressed="true"] {
+        background: #e6eadf;
+        color: var(--accent);
+      }
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+        gap: 24px 18px;
+        padding-bottom: 48px;
+      }
+      .preset {
+        border: none;
+        padding: 6px;
+        border-radius: 12px;
+        min-width: 0;
+        display: grid;
+        gap: 10px;
+        text-align: center;
+      }
+      .preset img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        transition: transform 150ms;
+      }
+      .preset:hover img {
+        transform: translateY(-4px) rotate(-3deg);
+      }
+      .preset[aria-pressed="true"] {
+        background: #e6eadf;
+      }
+      .preset .index {
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0;
+      }
+      .usage {
+        padding: 30px 0 45px;
+        border-top: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 30px;
+      }
+      .usage p,
+      footer {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.8;
+      }
+      pre {
+        overflow-x: auto;
+        font:
+          12px/1.9 ui-monospace,
+          monospace;
+        margin: 0;
+        padding: 20px;
+        background: #eeefe8;
+        border-radius: 8px;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 20px 0 30px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      @media (max-width: 900px) {
+        .wrap {
+          padding: 0 28px;
+        }
+        .hero {
+          gap: 20px;
+        }
+        .constellation img {
+          width: 90px;
+          height: 90px;
+        }
+        .constellation img:nth-child(1) {
+          width: 130px;
+          height: 130px;
+          left: 22%;
+          top: 30%;
+        }
+        .gallery {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+        .workbench {
+          grid-template-columns: 200px 1fr;
+          gap: 25px;
+        }
+        .controls {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .bench-header {
+          align-items: start;
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 560px) {
+        .wrap {
+          padding: 0 22px;
+        }
+        header {
+          height: 78px;
+          gap: 12px;
+        }
+        .wordmark {
+          font-size: 23px;
+          white-space: nowrap;
+        }
+        .tag {
+          padding: 8px 10px;
+        }
+        .hero {
+          display: block;
+          padding: 40px 0 30px;
+        }
+        h1 {
+          font-size: 52px;
+          letter-spacing: -1.6px;
+        }
+        .intro {
+          font-size: 14px;
+        }
+        .constellation {
+          height: 225px;
+          max-width: 340px;
+          margin: 28px auto 0;
+        }
+        .constellation img:nth-child(1) {
+          top: 22%;
+          left: 30%;
+        }
+        .constellation img {
+          width: 83px;
+          height: 83px;
+        }
+        .workbench {
+          display: block;
+          padding: 28px 0;
+        }
+        .portrait {
+          margin-bottom: 28px;
+        }
+        #portrait {
+          width: 150px;
+          height: 150px;
+        }
+        .bench-header {
+          flex-direction: row;
+          align-items: center;
+        }
+        h2 {
+          font-size: 23px;
+        }
+        .seed {
+          flex-direction: column;
+          gap: 3px;
+          align-items: start;
+        }
+        .seed input {
+          width: 110px;
+          padding: 6px;
+        }
+        .gallery {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 16px 8px;
+        }
+        .usage {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          flex-direction: column;
+          gap: 5px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .preset img {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <div class="wordmark">orbit<span> / avatars</span></div>
+        <a
+          class="tag"
+          href="https://github.com/ichaida/orbit-avatars"
+          target="_blank"
+          rel="noreferrer"
+          >GitHub · MIT license</a
+        >
+      </header>
+      <section class="hero" aria-labelledby="title">
+        <div>
+          <h1 id="title">Familiar faces.<br /><em>Your own crew.</em></h1>
+          <p class="intro">
+            Soft colors, curious companions, and a face for every corner of your
+            app. Pick a starting point, explore fresh combinations, and make
+            them your own.
+          </p>
+        </div>
+        <div class="constellation" aria-hidden="true" id="hero-faces"></div>
+      </section>
+      <section class="workbench" aria-labelledby="builder-title">
+        <div class="portrait">
+          <img
+            id="portrait"
+            src="/default-avatar.svg"
+            alt="Customized avatar preview"
+          />
+          <div class="sizes" id="sizes" aria-label="Preview at app sizes"></div>
+        </div>
+        <div>
+          <div class="bench-header">
+            <h2 id="builder-title">Make a little you.</h2>
+            <label class="seed"
+              >Seed<input id="seed" value="hello-orbit" maxlength="200"
+            /></label>
+          </div>
+          <div class="controls" id="controls"></div>
+          <div class="actions">
+            <button class="primary" id="download">Download SVG</button
+            ><button id="copy">Copy React props</button
+            ><button id="shuffle">Shuffle</button>
+          </div>
+          <p role="status" id="status"></p>
+        </div>
+      </section>
+      <section aria-labelledby="collection-title">
+        <div class="collection-head">
+          <h2 id="collection-title">
+            Explore the crew <span id="count" class="index"></span>
+          </h2>
+          <div
+            class="filters"
+            id="filters"
+            aria-label="Filter collection"
+          ></div>
+        </div>
+        <div class="collection-tools">
+          <div
+            class="collection-source"
+            role="group"
+            aria-label="Collection source"
+          >
+            <button id="curated" aria-pressed="true">
+              Curated starting points
+            </button>
+            <button id="generated" aria-pressed="false">
+              Explore generated
+            </button>
+          </div>
+          <div class="batch-controls" id="batch-controls" hidden>
+            <button id="previous-batch" disabled>Previous batch</button>
+            <button id="next-batch">Next batch</button>
+          </div>
+        </div>
+        <div class="gallery" id="gallery"></div>
+        <p id="collection-status" role="status" class="intro"></p>
+      </section>
+      <section class="usage">
+        <div>
+          <h2>One seed. Same face.</h2>
+          <p>
+            TypeScript core · optional React component · no network requests.<br />Avatars
+            are synthetic illustrations and do not represent visitor identities.
+          </p>
+        </div>
+        <pre><code>import { CrewAvatar } from '@ichaida/orbit-avatars/react';
+
+&lt;CrewAvatar
+  seed="project-scoped-opaque-id"
+  size={40}
+  options={{ companion: 'cat', outfit: 'hoodie' }}
+/&gt;</code></pre>
+      </section>
+      <footer>
+        <span>Orbit Avatars / Original SVG artwork. MIT licensed.</span
+        ><a href="https://github.com/ichaida/orbit-avatars/blob/main/LICENSE"
+          >MIT license</a
+        >
+        · <a href="/fonts/LICENSE.txt">Font license</a>
+      </footer>
+    </main>
+    <script type="module">
+      import {
+        avatarOptions,
+        avatarPresets,
+        hijabPresets,
+        generateAvatarBatch,
+        resolveAvatar,
+        createAvatarDataUri,
+        createAvatarSvg,
+      } from "../src/index.ts";
+      const $ = (id) => document.getElementById(id);
+      let seed = "hello-orbit",
+        traits = resolveAvatar(seed),
+        selected = null;
+      let source = "curated",
+        activeFilter = "All",
+        batch = 0;
+      const label = (key) =>
+        ({
+          hairColor: "Hair color",
+          facialHair: "Facial hair",
+          hijabStyle: "Hijab style",
+          scarfColor: "Scarf color",
+        })[key] || key[0].toUpperCase() + key.slice(1);
+      const selects = new Map();
+      const fields = new Map();
+      for (const [key, values] of Object.entries(avatarOptions)) {
+        const field = document.createElement("label");
+        field.textContent = label(key);
+        const select = document.createElement("select");
+        for (const value of values) select.add(new Option(value, value));
+        select.addEventListener("change", () => {
+          traits[key] = select.value;
+          if (
+            ((key === "companion" || key === "glasses") &&
+              select.value !== "none") ||
+            (key === "headwear" &&
+              (select.value === "beanie" || select.value === "turban"))
+          )
+            traits.accessory = "none";
+          selected = null;
+          update();
+        });
+        field.append(select);
+        $("controls").append(field);
+        selects.set(key, select);
+        fields.set(key, field);
+      }
+      const hero = [0, 13, 27, 40, 59];
+      for (const i of hero) {
+        const img = new Image();
+        img.src = createAvatarDataUri(i, avatarPresets[i].traits);
+        img.alt = "";
+        $("hero-faces").append(img);
+      }
+      for (const size of [24, 36, 48]) {
+        const img = new Image(size, size);
+        img.alt = `${size} pixel avatar preview`;
+        $("sizes").append(img);
+      }
+      function update() {
+        traits = resolveAvatar(seed, traits);
+        const uri = createAvatarDataUri(seed, traits);
+        $("portrait").src = uri;
+        for (const img of $("sizes").children) img.src = uri;
+        for (const [key, select] of selects) select.value = traits[key];
+        for (const key of ["hijabStyle", "scarfColor"])
+          fields.get(key).hidden = traits.headwear !== "hijab";
+        for (const key of ["hair", "hairColor", "facialHair"])
+          fields.get(key).hidden = traits.headwear === "hijab";
+        for (const button of $("gallery").children)
+          button.setAttribute(
+            "aria-pressed",
+            String(button.dataset.id === selected),
+          );
+        $("status").textContent =
+          traits.accessory === "crown"
+            ? "Crowns are worn alone. Choosing another accessory replaces the crown."
+            : "";
+      }
+      function gallery(filter = activeFilter) {
+        activeFilter = filter;
+        $("gallery").replaceChildren();
+        const constraints = {
+          Curls: { hair: "curls", headwear: "none" },
+          Headwear: { headwear: "beanie" },
+          Hijabs: { headwear: "hijab", facialHair: "none" },
+          Crowns: { accessory: "crown" },
+          Glasses: { glasses: "round" },
+          Companions: { companion: "cat" },
+        };
+        const candidates =
+          source === "generated"
+            ? generateAvatarBatch("orbit-crew-explore", {
+                count: 24,
+                offset: batch * 24,
+                traits: constraints[filter] || {},
+              })
+            : [...avatarPresets, ...hijabPresets];
+        const matches = candidates.filter(
+          (p) =>
+            filter === "All" ||
+            (filter === "Curls" &&
+              ["curls", "coils"].includes(p.traits.hair)) ||
+            (filter === "Headwear" && p.traits.headwear !== "none") ||
+            (filter === "Hijabs" && p.traits.headwear === "hijab") ||
+            (filter === "Crowns" && p.traits.accessory === "crown") ||
+            (filter === "Glasses" && p.traits.glasses !== "none") ||
+            (filter === "Companions" && p.traits.companion !== "none"),
+        );
+        $("count").textContent = `${matches.length} shown`;
+        $("batch-controls").hidden = source !== "generated";
+        $("previous-batch").disabled = batch === 0;
+        $("collection-status").textContent =
+          source === "generated"
+            ? `Generated batch ${batch + 1}. Keep exploring or select a portrait to customize.`
+            : "These portraits are starting points. Explore generated combinations or customize any face.";
+        for (const preset of matches) {
+          const button = document.createElement("button");
+          button.className = "preset";
+          button.dataset.id = preset.id;
+          button.setAttribute("aria-label", `Customize ${preset.name}`);
+          const img = new Image(120, 120);
+          img.src = createAvatarDataUri(preset.id, preset.traits);
+          img.alt = "";
+          img.loading = "lazy";
+          const caption = document.createElement("span");
+          caption.className = "index";
+          caption.textContent =
+            source === "generated"
+              ? preset.name
+              : preset.id.startsWith("hijab-")
+                ? preset.name
+                : preset.id;
+          button.append(img, caption);
+          button.onclick = () => {
+            seed = preset.id;
+            $("seed").value = seed;
+            traits = { ...preset.traits };
+            selected = preset.id;
+            update();
+          };
+          $("gallery").append(button);
+        }
+        update();
+      }
+      for (const name of [
+        "All",
+        "Curls",
+        "Headwear",
+        "Hijabs",
+        "Crowns",
+        "Glasses",
+        "Companions",
+      ]) {
+        const button = document.createElement("button");
+        button.textContent = name;
+        button.setAttribute("aria-pressed", String(name === "All"));
+        button.onclick = () => {
+          for (const b of $("filters").children)
+            b.setAttribute("aria-pressed", String(b === button));
+          batch = 0;
+          selected = null;
+          gallery(name);
+        };
+        $("filters").append(button);
+      }
+      for (const mode of ["curated", "generated"]) {
+        $(mode).onclick = () => {
+          source = mode;
+          batch = 0;
+          selected = null;
+          for (const item of ["curated", "generated"])
+            $(item).setAttribute("aria-pressed", String(mode === item));
+          gallery();
+        };
+      }
+      $("previous-batch").onclick = () => {
+        if (batch > 0) batch--;
+        selected = null;
+        gallery();
+      };
+      $("next-batch").onclick = () => {
+        batch++;
+        selected = null;
+        gallery();
+      };
+      $("seed").oninput = () => {
+        seed = $("seed").value;
+        traits = resolveAvatar(seed);
+        selected = null;
+        update();
+      };
+      $("shuffle").onclick = () => {
+        seed = `crew-${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+        $("seed").value = seed;
+        traits = resolveAvatar(seed);
+        selected = null;
+        update();
+      };
+      $("download").onclick = () => {
+        const url = URL.createObjectURL(
+          new Blob(
+            [
+              createAvatarSvg(seed, {
+                ...traits,
+                title: "Orbit Avatars avatar",
+              }),
+            ],
+            { type: "image/svg+xml" },
+          ),
+        );
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "orbit-avatar.svg";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        $("status").textContent = "SVG downloaded.";
+      };
+      $("copy").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(
+            `<CrewAvatar seed={${JSON.stringify(seed)}} options={${JSON.stringify(traits)}} size={40} />`,
+          );
+          $("status").textContent = "React props copied.";
+        } catch {
+          $("status").textContent =
+            "Clipboard unavailable in this browser. Use the package README example.";
+        }
+      };
+      gallery();
+    </script>
+  </body>
+</html>
