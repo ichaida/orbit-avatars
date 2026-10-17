@@ -1,6 +1,6 @@
 {
-  "name": "@ichaida/orbit-avatars",
-  "version": "0.1.0",
+  "name": "orbit-avatars",
+  "version": "0.1.1",
   "description": "Friendly, customizable SVG avatars with a dependency-free TypeScript core and optional React component.",
   "license": "MIT",
   "author": "Ismail Chaida",
@@ -57,7 +57,8 @@
     "format:check": "prettier --check src test site *.json *.ts *.md .github/workflows/*.yml",
     "check": "bun run typecheck && bun run test && bun run format:check",
     "prepare": "tsc -p tsconfig.build.json",
-    "deploy": "bun run build:site && wrangler deploy"
+    "deploy": "bun run build:site && wrangler deploy",
+    "prepublishOnly": "npm run build && npm run typecheck"
   },
   "peerDependencies": {
     "react": ">=18"

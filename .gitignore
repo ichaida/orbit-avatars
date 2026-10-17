@@ -8,3 +8,4 @@ site-dist/
 *.tgz
 .DS_Store
 coverage/
+.npmrc

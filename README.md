@@ -6,26 +6,22 @@ Friendly SVG avatars with a dependency-free TypeScript core, an optional React c
 
 Generate portraits from any string or numeric seed. Customize skin tones, hairstyles, glasses, outfits, hijabs, crowns and small companions. Curated portraits are starting points rather than a fixed catalog limit. All artwork is original, composed from reusable SVG parts, and generated locally without an avatar service.
 
-## Use from GitHub
-
-This project is available from GitHub. It has not been published to npm. Install directly from the public source repository:
+## Install
 
 ```sh
-npm install github:ichaida/orbit-avatars
-# React component users also need React 18 or newer:
+npm install orbit-avatars
+```
+
+React component users also need React 18 or newer:
+
+```sh
 npm install react
 ```
 
-A compiled package is also available from the GitHub release:
-
-```sh
-npm install https://github.com/ichaida/orbit-avatars/releases/download/v0.1.0/ichaida-orbit-avatars-0.1.0.tgz
-```
-
-Git installs run the TypeScript prepare step. For reproducible production installs, pin a reviewed commit SHA or build from a source checkout. To use a local checkout, run `bun install` and `bun run build`, then install its package tarball created with `npm pack`.
+The published package includes compiled JavaScript and TypeScript declarations. Its core has no runtime dependencies; React remains an optional peer dependency. The [GitHub source](https://github.com/ichaida/orbit-avatars) and [release archives](https://github.com/ichaida/orbit-avatars/releases) are also available.
 
 ```tsx
-import { CrewAvatar } from "@ichaida/orbit-avatars/react";
+import { CrewAvatar } from "orbit-avatars/react";
 
 <CrewAvatar
   seed="your-opaque-id"
@@ -46,7 +42,7 @@ import {
   avatarPresets,
   hijabPresets,
   generateAvatarBatch,
-} from "@ichaida/orbit-avatars";
+} from "orbit-avatars";
 
 const svg = createAvatarSvg("opaque-id", { companion: "sprout" });
 const imageSource = createAvatarDataUri("opaque-id");
